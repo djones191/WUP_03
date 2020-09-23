@@ -12,10 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r include=FALSE}
 require(tidyverse)
 require(tigerstats)
+require(knitr)
 davisdata <- read.csv(file="UCDavis.csv")
 ```
 ## Our Goal is to answer this question Is there a difference between the alcohol consumed between the row
 ## you choose to sit in??
+
+$H_O$: There is no difference among the mean amounts of alcohol consumed per week by row  
+$H_A$: There is a difference among the mean amounts of alcohol consumed per week by row  
+
 
 ## Now with ggplot - first select the basic data
 
@@ -36,9 +41,23 @@ basicCN + geom_boxplot(notch=TRUE,outlier.color = "red") + stat_boxplot(geom ='e
 ```
 
 ## Numerical Summarys 
-
+```{r}
+favstats(alcohol~Seat,data=davisdata)
+```
 ## Inferential Tests
+```{r}
+model1 <- aov(alcohol~Seat,data=davisdata)
+summary.aov(model1)
+```
+```{r}
+#we specify the margins starting at the bottom and proceeding clockwise - thus 8.7 is the left side margin to hold the names of the factors
+par(mar = c(3, 8.7, 2, 2))
+plot(TukeyHSD(model1),las=2)
+```
 
-## Conclusions
+## Conclusions  
+It appears from the tukey model that the confidence intervals shows that there is not a difference in the middle and front seats but the back is different from both the middle and the front  
+
+The p value is 0.000116 < 0.05 the null hypothesis is extremely unlikely. We reject the null hypothesis.  
 
 
